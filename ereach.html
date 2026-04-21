@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Biaya E-Reach</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .card { background: white; border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  .logo { text-align: center; margin-bottom: 24px; }
+  .logo h1 { font-size: 22px; color: #1a3c5e; font-weight: 700; }
+  .logo p { color: #6b7280; font-size: 13px; margin-top: 4px; }
+  .rate-badge { background: #e8f4fd; color: #1a3c5e; border-radius: 8px; padding: 10px 16px; text-align: center; font-size: 13px; margin-bottom: 24px; }
+  .rate-badge strong { font-size: 16px; }
+  label { display: block; font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 6px; }
+  input { width: 100%; padding: 12px 14px; border: 1.5px solid #d1d5db; border-radius: 10px; font-size: 16px; color: #111; outline: none; transition: border 0.2s; }
+  input:focus { border-color: #3b82f6; }
+  .currency-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .currency-label { font-size: 15px; font-weight: 700; color: #1a3c5e; min-width: 42px; }
+  .arrow { text-align: center; font-size: 22px; color: #9ca3af; margin: 8px 0 16px; }
+  .result-box { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 16px; text-align: center; }
+  .result-box .label { font-size: 12px; color: #16a34a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .result-box .amount { font-size: 28px; font-weight: 800; color: #15803d; margin-top: 4px; }
+  .divider { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }
+  .presets h3 { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 12px; }
+  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .preset-btn { background: #f3f4f6; border: none; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left; transition: background 0.15s; }
+  .preset-btn:hover { background: #e0e7ff; }
+  .preset-btn .pgm { font-size: 11px; color: #6b7280; }
+  .preset-btn .psgd { font-size: 13px; font-weight: 700; color: #1a3c5e; }
+  .preset-btn .pidr { font-size: 11px; color: #059669; }
+  .note { font-size: 11px; color: #9ca3af; text-align: center; margin-top: 20px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <h1>🏫 Kalkulator Biaya E-Reach</h1>
+    <p>Konversi biaya kelas enrichment ke Rupiah</p>
+  </div>
+
+  <div class="rate-badge">
+    Kurs hari ini: <strong>1 SGD = Rp 13.479</strong><br>
+    <span style="font-size:11px;">22 April 2026 — sumber: Investing.com</span>
+  </div>
+
+  <label>Masukkan biaya dalam SGD (S$):</label>
+  <div class="currency-row">
+    <span class="currency-label">S$</span>
+    <input type="number" id="sgdInput" placeholder="contoh: 150" min="0" oninput="convert()">
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <div class="result-box">
+    <div class="label">Setara dalam Rupiah</div>
+    <div class="amount" id="idrResult">Rp —</div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="presets">
+    <h3>💡 Referensi biaya enrichment umum di Singapura:</h3>
+    <div class="preset-grid" id="presetGrid"></div>
+  </div>
+
+  <p class="note">⚠️ Harga referensi bersifat estimasi. Hubungi E-Reach langsung untuk harga resmi.<br>Kurs dapat berubah sewaktu-waktu.</p>
+</div>
+
+<script>
+  const RATE = 13479;
+
+  const presets = [
+    { pgm: "Speech & Drama (per term ~9 sesi)", sgd: 135 },
+    { pgm: "Creative Art (per term ~9 sesi)", sgd: 120 },
+    { pgm: "Abacus (per term ~9 sesi)", sgd: 130 },
+    { pgm: "Mini Sports (per term ~9 sesi)", sgd: 110 },
+  ];
+
+  function formatIDR(num) {
+    return "Rp " + Math.round(num).toLocaleString("id-ID");
+  }
+
+  function convert() {
+    const val = parseFloat(document.getElementById("sgdInput").value);
+    const el = document.getElementById("idrResult");
+    if (!val || val <= 0) { el.textContent = "Rp —"; return; }
+    el.textContent = formatIDR(val * RATE);
+  }
+
+  const grid = document.getElementById("presetGrid");
+  presets.forEach(p => {
+    const monthly = (p.sgd / 2.25).toFixed(0); // approx monthly
+    const yearly = (p.sgd * 4).toFixed(0); // 4 terms a year
+    const btn = document.createElement("button");
+    btn.className = "preset-btn";
+    btn.innerHTML = `
+      <div class="pgm">${p.pgm}</div>
+      <div class="psgd">S$ ${p.sgd} / term</div>
+      <div class="pidr">${formatIDR(p.sgd * RATE)} / term</div>
+    `;
+    btn.onclick = () => {
+      document.getElementById("sgdInput").value = p.sgd;
+      convert();
+    };
+    grid.appendChild(btn);
+  });
+</script>
+</body>
+</html>
