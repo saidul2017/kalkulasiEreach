@@ -45,15 +45,15 @@
     <span style="font-size:11px;">22 April 2026 — sumber: Investing.com</span>
   </div>
 
-  <label>Masukkan biaya dalam SGD (S$):</label>
+  <label for="sgdInput">Masukkan biaya dalam SGD (S$):</label>
   <div class="currency-row">
     <span class="currency-label">S$</span>
-    <input type="number" id="sgdInput" placeholder="contoh: 150" min="0" oninput="convert()">
+    <input type="number" id="sgdInput" placeholder="contoh: 150" min="0" aria-label="Masukkan biaya dalam SGD" oninput="convert()">
   </div>
 
-  <div class="arrow">↓</div>
+  <div class="arrow" aria-hidden="true">↓</div>
 
-  <div class="result-box">
+  <div class="result-box" aria-live="polite">
     <div class="label">Setara dalam Rupiah</div>
     <div class="amount" id="idrResult">Rp —</div>
   </div>
@@ -91,9 +91,8 @@
 
   const grid = document.getElementById("presetGrid");
   presets.forEach(p => {
-    const monthly = (p.sgd / 2.25).toFixed(0); // approx monthly
-    const yearly = (p.sgd * 4).toFixed(0); // 4 terms a year
     const btn = document.createElement("button");
+    btn.type = "button";
     btn.className = "preset-btn";
     btn.innerHTML = `
       <div class="pgm">${p.pgm}</div>
